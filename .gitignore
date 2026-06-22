@@ -18,3 +18,7 @@ src/bin/.cache/
 # OS Metadata
 .DS_Store
 Thumbs.db
+
+# Exclude transcripts & local testing prompts
+*.txt
+claude.md
