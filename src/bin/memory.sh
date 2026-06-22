@@ -19,6 +19,7 @@ if [ -z "$ACTION" ]; then
   echo "  ./memory.sh query \"<query_text>\"          - Perform semantic search across past memories"
   echo "  ./memory.sh insert \"<text>\" [src] [topic] - Insert a custom memory chunk semantically"
   echo "  ./memory.sh consolidate                   - Resolve overlapping or conflicting memory rules"
+  echo "  ./memory.sh viz                           - Real-time ASCII visualization and database metrics"
   exit 0
 fi
 
@@ -28,6 +29,8 @@ elif [ "$ACTION" == "mine" ]; then
   node mine.js
 elif [ "$ACTION" == "consolidate" ]; then
   node consolidate.js
+elif [ "$ACTION" == "viz" ]; then
+  node viz.js
 elif [ "$ACTION" == "query" ]; then
   if [ -z "$PARAM1" ]; then
     echo "Error: Missing query string."

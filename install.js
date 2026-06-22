@@ -6,6 +6,7 @@ const { execSync } = require('child_process');
 const HOME_DIR = os.homedir();
 const GLOBAL_CLAUDE_DIR = path.join(HOME_DIR, '.claude');
 const GLOBAL_MEMORY_DIR = path.join(GLOBAL_CLAUDE_DIR, 'memory');
+const GLOBAL_SKILLS_DIR = path.join(GLOBAL_CLAUDE_DIR, 'skills');
 
 console.log('====================================================');
 console.log('      🧠 Welcome to the ApexMemory Setup Wizard 🧠   ');
@@ -39,10 +40,8 @@ async function run() {
 
     // 2. Deploy sub-package files to ~/.claude/memory/
     console.log(`[~] Deploying ApexMemory binaries to ${GLOBAL_MEMORY_DIR}...`);
-    if (fs.existsSync(GLOBAL_MEMORY_DIR)) {
-      console.log('[!] Existing ApexMemory binary folder found. Backing up and overwriting...');
-      const backupDir = GLOBAL_MEMORY_DIR + '_backup_' + Date.now();
-      fs.renameSync(GLOBAL_MEMORY_DIR, backupDir);
+    if (!fs.existsSync(GLOBAL_MEMORY_DIR)) {
+      fs.mkdirSync(GLOBAL_MEMORY_DIR, { recursive: true });
     }
 
     const srcDir = path.join(__dirname, 'src');
@@ -88,7 +87,15 @@ async function run() {
       console.log('[i] Home directory router already exists.');
     }
 
-    // 6. Test-compile initial snapshot to verify setup
+    // 6. Deploy Global Skills to ~/.claude/skills/
+    console.log('[~] Deploying native global slash command skills...');
+    const repoSkillsDir = path.join(__dirname, 'skills');
+    if (fs.existsSync(repoSkillsDir)) {
+      copyFolderSync(repoSkillsDir, GLOBAL_SKILLS_DIR);
+      console.log('[+] Native global skills successfully deployed.');
+    }
+
+    // 7. Test-compile initial snapshot to verify setup
     console.log('[~] Running initial memory snapshot compilation...');
     try {
       const snapshotScript = path.join(GLOBAL_MEMORY_DIR, 'bin/snapshot.js');
