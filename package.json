@@ -1,0 +1,23 @@
+{
+  "name": "apex-memory",
+  "version": "1.0.0",
+  "description": "Elite local, self-improving, and cross-project vector semantic memory database for Claude Code",
+  "main": "cli.js",
+  "scripts": {
+    "install-global": "node install.js",
+    "snapshot": "node cli.js snapshot",
+    "mine": "node cli.js mine",
+    "consolidate": "node cli.js consolidate"
+  },
+  "keywords": [
+    "claude-code",
+    "memory",
+    "embeddings",
+    "wasm",
+    "vector-database",
+    "rag",
+    "self-improving"
+  ],
+  "author": "Beste",
+  "license": "MIT"
+}

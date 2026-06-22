@@ -1,0 +1,20 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local Configs & Sensitive Credentials
+.claude/
+.env
+.env.local
+
+# Local ApexMemory database files & computed model caches
+db/
+src/db/
+src/bin/.cache/
+.cache/
+
+# OS Metadata
+.DS_Store
+Thumbs.db
