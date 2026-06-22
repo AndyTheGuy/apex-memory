@@ -106,6 +106,24 @@ ApexMemory is designed to be **completely hands-off in your daily conversations*
 
 ---
 
+## ⚡ Native Claude Code Slash Commands (Skills)
+
+ApexMemory automatically deploys three high-performance, native global slash commands (skills) straight to your Claude Code interface on installation:
+
+### 1. `/apex-init`
+* **When to use:** When initializing an old or existing project folder for the first time.
+* **What it does:** Executes your entire project setup natively in a single command. It links your folder, parses and vectorizes any past session histories, and compiles your snapshot.
+
+### 2. `/apex-query "<your search query>"`
+* **When to use:** To search your global vector database on the fly during active coding chats.
+* **What it does:** Performs a local WASM-vector semantic search directly from your active conversation window.
+
+### 3. `/apex-viz`
+* **When to use:** To check your active database status, review your de-duplication counts, or see a visual mapping of your folder structure.
+* **What it does:** Triggers your local visualization engine, rendering an interactive ASCII dataflow map and database metrics directly in your console.
+
+---
+
 ## ⚙️ Manual Developer CLI Shortcuts
 
 You can run these scripts inside your cloned repository folder to manage your database manually:
