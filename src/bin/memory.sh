@@ -20,6 +20,11 @@ if [ -z "$ACTION" ]; then
   echo "  ./memory.sh insert \"<text>\" [src] [topic] - Insert a custom memory chunk semantically"
   echo "  ./memory.sh consolidate                   - Resolve overlapping or conflicting memory rules"
   echo "  ./memory.sh viz                           - Real-time ASCII visualization and database metrics"
+  echo "  ./memory.sh dashboard                     - Compile and launch HTML interactive web visualizer"
+  echo "  ./memory.sh disable                       - Disable memory system for this active project"
+  echo "  ./memory.sh enable                        - Re-enable memory system for this active project"
+  echo "  ./memory.sh disable-global                - Disable memory system globally for all projects"
+  echo "  ./memory.sh enable-global                 - Re-enable memory system globally for all projects"
   exit 0
 fi
 
@@ -31,6 +36,11 @@ elif [ "$ACTION" == "consolidate" ]; then
   node consolidate.js
 elif [ "$ACTION" == "viz" ]; then
   node viz.js
+elif [ "$ACTION" == "dashboard" ]; then
+  node dashboard.js
+elif [ "$ACTION" == "disable" ] || [ "$ACTION" == "enable" ] || [ "$ACTION" == "disable-global" ] || [ "$ACTION" == "enable-global" ]; then
+  # Route toggle commands natively through local CLI proxy to handle re-compilation and path checks
+  node ../../../cli.js "$ACTION"
 elif [ "$ACTION" == "query" ]; then
   if [ -z "$PARAM1" ]; then
     echo "Error: Missing query string."

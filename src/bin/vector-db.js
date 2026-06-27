@@ -155,7 +155,15 @@ if (require.main === module) {
       process.exit(1);
     }
     insertRecord({ text, metadata: { source, topic } }).then(rec => {
-      console.log('Record Inserted Successfully:', JSON.stringify(rec, null, 2));
+      if (rec) {
+        console.log('Record Inserted Successfully:', JSON.stringify({
+          id: rec.id,
+          text: rec.text,
+          metadata: rec.metadata
+        }, null, 2));
+      } else {
+        console.log('Record Inserted Successfully: null');
+      }
     });
   } else if (action === 'query') {
     const query = args[1];
