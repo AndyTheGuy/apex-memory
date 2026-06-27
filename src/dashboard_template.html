@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ApexMemory: Local Semantic Brain Dashboard</title>
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --panel-color: #161b22;
+      --border-color: #30363d;
+      --text-color: #c9d1d9;
+      --text-muted: #8b949e;
+      --primary-color: #58a6ff;
+      --success-color: #2ea44f;
+      --warning-color: #d29922;
+      --danger-color: #f85149;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: rgba(46, 164, 79, 0.15);
+      color: #56d364;
+    }
+
+    .status-badge.disabled {
+      background-color: rgba(248, 81, 73, 0.15);
+      color: #ff7b72;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background-color: var(--panel-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .card {
+      background-color: var(--panel-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .search-box {
+      width: 100%;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px 14px;
+      color: var(--text-color);
+      font-size: 14px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--border-color);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .code-block {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background-color: #21262d;
+      border: 1px solid var(--border-color);
+    }
+
+    .badge.active {
+      color: #56d364;
+      background-color: rgba(46, 164, 79, 0.1);
+    }
+
+    .badge.superseded {
+      color: #ff7b72;
+      background-color: rgba(248, 81, 73, 0.1);
+    }
+
+    .tree-view {
+      padding: 8px 0;
+    }
+
+    .tree-node {
+      margin-left: 20px;
+      border-left: 2px dashed var(--border-color);
+      padding-left: 12px;
+      margin-top: 8px;
+    }
+
+    .tree-root {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧠 ApexMemory Local Semantic Brain</h1>
+      <div id="status-badge" class="status-badge">🟢 Memory System Active</div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Active Memories</div>
+        <div id="stat-active" class="stat-value">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Superseded / Archived</div>
+        <div id="stat-superseded" class="stat-value">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Database Size</div>
+        <div id="stat-size" class="stat-value">0 KB</div>
+      </div>
+    </div>
+
+    <!-- Active Lineage Overlap View -->
+    <div class="card">
+      <div class="card-header">🛡️ Conflict Resolution Lineage (Superseded Chains)</div>
+      <div class="card-body tree-view" id="lineage-tree">
+        <!-- Will be compiled dynamically -->
+      </div>
+    </div>
+
+    <!-- Live Searchable Database -->
+    <div class="card">
+      <div class="card-header">📁 Local Database Records (store.json)</div>
+      <div class="card-body">
+        <input type="text" id="search-input" class="search-box" placeholder="Filter memories by keyword, source, or topic...">
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Content (Text)</th>
+                <th>Source Context</th>
+                <th>Topic</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="db-records-body">
+              <!-- Will be compiled dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DATA PLACEHOLDER - Script will inject store.json directly here during compilation
+    const DATABASE_STATE = { records: [] };
+    const SYSTEM_METRICS = { disabled: false, sizeKb: "0.00" };
+
+    function initDashboard() {
+      // 1. Update Badge Status
+      const badge = document.getElementById('status-badge');
+      if (SYSTEM_METRICS.disabled) {
+        badge.className = 'status-badge disabled';
+        badge.innerText = '🔴 Memory System Disabled';
+      } else {
+        badge.className = 'status-badge';
+        badge.innerText = '🟢 Memory System Active';
+      }
+
+      // 2. Compute stats
+      const records = DATABASE_STATE.records || [];
+      const active = records.filter(r => !r.metadata || r.metadata.superseded !== true);
+      const superseded = records.filter(r => r.metadata && r.metadata.superseded === true);
+
+      document.getElementById('stat-active').innerText = active.length;
+      document.getElementById('stat-superseded').innerText = superseded.length;
+      document.getElementById('stat-size').innerText = `${SYSTEM_METRICS.sizeKb} KB`;
+
+      // 3. Render Database Table
+      renderTable(records);
+
+      // 4. Render Lineage Tree
+      renderLineage(records);
+
+      // 5. Setup search filter
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = records.filter(r => {
+          return r.text.toLowerCase().includes(query) ||
+                 (r.metadata.source && r.metadata.source.toLowerCase().includes(query)) ||
+                 (r.metadata.topic && r.metadata.topic.toLowerCase().includes(query));
+        });
+        renderTable(filtered);
+      });
+    }
+
+    function renderTable(records) {
+      const tbody = document.getElementById('db-records-body');
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No records found in database matching criteria.</td></tr>';
+        return;
+      }
+
+      records.forEach(r => {
+        const isSuperseded = r.metadata && r.metadata.superseded === true;
+        const statusBadge = isSuperseded
+          ? `<span class="badge superseded">Superseded</span>`
+          : `<span class="badge active">Active</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family: monospace; color: var(--primary-color);">${r.id}</td>
+          <td><pre class="code-block">${escapeHtml(r.text)}</pre></td>
+          <td style="color: var(--text-muted); font-size: 12px;">${r.metadata.source || 'N/A'}</td>
+          <td><span class="badge">${r.metadata.topic || 'general'}</span></td>
+          <td>${statusBadge}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderLineage(records) {
+      const treeContainer = document.getElementById('lineage-tree');
+      treeContainer.innerHTML = '';
+
+      const superseded = records.filter(r => r.metadata && r.metadata.superseded === true);
+      if (superseded.length === 0) {
+        treeContainer.innerHTML = '<div style="color: var(--text-muted); text-align: center; font-size: 13px;">No active conflict lines in memory yet. Use /apex-init on projects to run temporal de-confliction scans.</div>';
+        return;
+      }
+
+      superseded.forEach(loser => {
+        const winnerId = loser.metadata.superseded_by;
+        const winner = records.find(r => r.id === winnerId);
+
+        if (winner) {
+          const div = document.createElement('div');
+          div.style.marginBottom = '16px';
+          div.innerHTML = `
+            <div class="tree-root">❌ OUTDATED (${loser.metadata.timestamp}): "${escapeHtml(loser.text)}"\n  [ID: ${loser.id}]</div>
+            <div class="tree-node">
+              <span style="color: #56d364;">✔️ SUPERSEDED BY (${winner.metadata.timestamp}):</span> "${escapeHtml(winner.text)}"\n  [ID: ${winner.id}]
+            </div>
+          `;
+          treeContainer.appendChild(div);
+        }
+      });
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    window.onload = initDashboard;
+  </script>
+</body>
+</html>

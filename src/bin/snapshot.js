@@ -46,6 +46,21 @@ function ensureTemplateFiles() {
 }
 
 async function compileMemorySnapshot() {
+  const HOME_DIR = require('os').homedir();
+  const GLOBAL_BYPASS_PATH = path.join(HOME_DIR, '.claude/disabled');
+  const LOCAL_BYPASS_PATH = path.join(process.cwd(), '.claude/disabled');
+
+  if (fs.existsSync(GLOBAL_BYPASS_PATH) || fs.existsSync(LOCAL_BYPASS_PATH)) {
+    console.log('[i] ApexMemory is currently disabled (Bypass file active). Compilation skipped.');
+    const disabledContent = `# 🧠 ApexMemory: Frozen Context Snapshot
+
+> [i] **ApexMemory is currently disabled** on your system or for this specific project.
+> All semantic queries, history mining, and context snaps are bypassed.
+`;
+    fs.writeFileSync(OUTPUT_INDEX_PATH, disabledContent, 'utf8');
+    return;
+  }
+
   ensureTemplateFiles();
 
   console.log('Compiling dynamic memory snapshot...');

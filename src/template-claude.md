@@ -50,9 +50,24 @@ You can run these scripts in your terminal to manage your vector memory database
    ```
    *Action:* Scans your active database, calculates semantic similarities, and automatically deprecates older conflicting guidelines using Temporal Dominance.
 
+6. **Web Dashboard Visualizer:**
+   ```bash
+   .claude/memory/bin/memory.sh dashboard
+   ```
+   *Action:* Compiles and launches your local, offline-ready HTML interactive memory web dashboard.
+
+7. **Bypass Toggles (On/Off Switches):**
+   ```bash
+   .claude/memory/bin/memory.sh disable          # Local project disable
+   .claude/memory/bin/memory.sh enable           # Local project enable
+   .claude/memory/bin/memory.sh disable-global   # Global system disable
+   .claude/memory/bin/memory.sh enable-global    # Global system enable
+   ```
+
 ---
 
 ## 📌 Guiding Behaviors for Claude Code
 - **Context Preservation:** Whenever a session starts, read [.claude/memory/memory.md](.claude/memory/memory.md) first to load the active context.
+- **Anti-Amnesia (Zero Startup Bloat):** Once [memory.md](.claude/memory/memory.md) is read, you **MUST NOT** execute redundant directory searches (like calling `Glob`, `Grep`, or `Read` on files) to "understand" the codebase or files on startup. Trust the snapshot's guidance completely. Only call search tools as a last resort if a file or goal is explicitly missing.
 - **Dynamic Updates:** If the user gives a new rule or makes a key project decision, append it to [.claude/memory/decisions.md](.claude/memory/decisions.md) and execute `.claude/memory/bin/memory.sh snapshot` to compile it into the index instantly.
 - **Clickable References:** Always use clickable markdown links (e.g. `[file.js](src/file.ts:12)`) when referencing code locations inside text.
