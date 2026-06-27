@@ -77,6 +77,14 @@ function renderVisualization() {
   console.log(`- Decisions (decisions.md):${checkFile(path.join(GLOBAL_MEMORY_DIR, 'decisions.md'))}`);
   console.log(`- Snapshot (memory.md):   ${checkFile(SNAPSHOT_PATH)}`);
   console.log('================================================================\n');
+
+  // Automatically trigger real-time browser dashboard launch on visualization
+  try {
+    const { launchDashboard } = require('./dashboard');
+    launchDashboard();
+  } catch (err) {
+    // Fail silently if dashboard.js isn't found in the active path
+  }
 }
 
 if (require.main === module) {
